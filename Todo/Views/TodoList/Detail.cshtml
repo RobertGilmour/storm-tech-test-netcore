@@ -14,9 +14,24 @@
     <ul class="list-group">
 
         <li class="list-group-item">
-            <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
-                <strong>Add New Item</strong>
-            </a>
+            <div class="row">
+                <div class="col-xs-5">
+                    <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
+                        <strong>Add New Item</strong>
+                    </a>
+                </div>
+                <div class="col-xs-7 text-right">
+                    <small>
+                        <a asp-action="Detail"
+                            asp-controller="TodoList"
+                            asp-route-todoListId="@Model.TodoListId"
+                            asp-route-hideCompletedItems="@(!Model.HideCompletedItems)"
+                        >
+                            @(Model.HideCompletedItems ? "Show" : "Hide") Completed Items
+                        </a>
+                    </small>
+                </div>
+            </div>
         </li>
 
         @foreach (var item in Model.Items.OrderBy(i => i.Importance))
