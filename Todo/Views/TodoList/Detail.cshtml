@@ -93,9 +93,11 @@
 
                 <div class="col-md-4 text-right">
                     <small>
-                        @item.ResponsibleParty.UserName
+                        @(item.ResponsibleParty.FullName == null 
+                            ? @item.ResponsibleParty.UserName 
+                            : $"{item.ResponsibleParty.FullName} ({@item.ResponsibleParty.UserName})")
 
-                        <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30"/>
+                        <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30" />
 
                     </small>
                 </div>

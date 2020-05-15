@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Todo.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Todo.Services;
 
 namespace Todo
 {
@@ -39,6 +40,13 @@ namespace Todo
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddHttpClient<GravatarService>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration.GetSection("ExternalApi:Gravatar")["BaseAddress"]);
+                client.Timeout = TimeSpan.FromSeconds(5);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(".NET Core Application");
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

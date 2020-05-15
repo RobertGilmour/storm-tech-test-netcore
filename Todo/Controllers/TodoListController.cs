@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,11 +17,13 @@ namespace Todo.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IUserStore<IdentityUser> userStore;
+        private readonly GravatarService gravatarService;
 
-        public TodoListController(ApplicationDbContext dbContext, IUserStore<IdentityUser> userStore)
+        public TodoListController(ApplicationDbContext dbContext, IUserStore<IdentityUser> userStore, GravatarService gravatarService)
         {
             this.dbContext = dbContext;
             this.userStore = userStore;
+            this.gravatarService = gravatarService;
         }
 
         public IActionResult Index()
@@ -35,6 +38,17 @@ namespace Todo.Controllers
         {
             var todoList = dbContext.SingleTodoList(todoListId);
             var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, hideCompletedItems, orderByField);
+
+            var userNames = viewmodel.Items
+                .Select(i => i.ResponsibleParty.Email)
+                .Distinct()
+                .ToDictionary(i => i, i => gravatarService.GetUserFullName(i));
+
+            foreach (var todoItem in viewmodel.Items)
+            {
+                todoItem.ResponsibleParty.FullName = userNames[todoItem.ResponsibleParty.Email];
+            }
+
             return View(viewmodel);
         }
 
