@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Todo.Data;
 using Todo.Data.Entities;
+using Todo.Models.TodoLists;
 
 namespace Todo.Views.TodoItem
 {
@@ -19,5 +20,12 @@ namespace Todo.Views.TodoItem
         {
             return dbContext.Users.Select(u => new SelectListItem {Text = u.UserName, Value = u.Id}).ToList();
         }
+
+        public static readonly SelectListItem[] TodoListDetailsSortFields =
+        {
+            new SelectListItem {Text = "Default", Value = TodoListSortFields.Default.ToString()},
+            new SelectListItem {Text = "Importance", Value = TodoListSortFields.Importance.ToString()},
+            new SelectListItem {Text = "Rank", Value = TodoListSortFields.Rank.ToString()},
+        };
     }
 }

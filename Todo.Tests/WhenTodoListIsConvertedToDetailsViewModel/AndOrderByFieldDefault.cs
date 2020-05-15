@@ -6,32 +6,30 @@ using Xunit;
 
 namespace Todo.Tests.WhenTodoListIsConvertedToDetailsViewModel
 {
-    public class AndHideCompletedItemsTrue
+    public class AndOrderByFieldDefault
     {
         private readonly TodoListDetailViewmodel resultViewModel;
 
-        public AndHideCompletedItemsTrue()
+        public AndOrderByFieldDefault()
         {
             var user = new IdentityUser("alice@example.com");
             user.Email = user.UserName;
             var todoList = new TestTodoListBuilder(user, "shopping list")
-                .WithItem("Completed Item", Importance.Medium, completed: true)
-                .WithItem("Uncompleted Item", Importance.Medium)
+                .WithItem("1", Importance.Low, rank: 3)
+                .WithItem("2", Importance.High, rank: 2)
+                .WithItem("3", Importance.Medium, rank: 1)
                 .Build();
 
             resultViewModel = TodoListDetailViewmodelFactory.Create(todoList, true, TodoListSortFields.Default);
         }
 
         [Fact]
-        public void DoesNotContainCompletedItem()
+        public void TodoListMaintainsInputOrdering()
         {
-            Assert.DoesNotContain(resultViewModel.Items, item => item.IsDone);
-        }
-
-        [Fact]
-        public void ContainsUncompletedItem()
-        {
-            Assert.Contains(resultViewModel.Items, item => item.Title == "Uncompleted Item");
+            Assert.Collection(resultViewModel.Items,
+                item => Assert.Equal("1", item.Title),
+                item => Assert.Equal("2", item.Title),
+                item => Assert.Equal("3", item.Title));
         }
     }
 }

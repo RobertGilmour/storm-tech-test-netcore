@@ -19,7 +19,7 @@ namespace Todo.Tests.WhenTodoListIsConvertedToDetailsViewModel
                 .WithItem("Uncompleted Item", Importance.Medium)
                 .Build();
 
-            resultViewModel = TodoListDetailViewmodelFactory.Create(todoList, false);
+            resultViewModel = TodoListDetailViewmodelFactory.Create(todoList, false, TodoListSortFields.Default);
         }
 
         [Fact]

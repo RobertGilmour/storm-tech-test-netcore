@@ -31,10 +31,10 @@ namespace Todo.Controllers
             return View(viewmodel);
         }
 
-        public IActionResult Detail(int todoListId, bool hideCompletedItems)
+        public IActionResult Detail(int todoListId, bool hideCompletedItems, TodoListSortFields orderByField)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
-            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, hideCompletedItems);
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, hideCompletedItems, orderByField);
             return View(viewmodel);
         }
 

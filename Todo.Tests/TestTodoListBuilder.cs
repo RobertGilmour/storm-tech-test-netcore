@@ -12,7 +12,7 @@ namespace Todo.Tests
     {
         private readonly string title;
         private readonly IdentityUser owner;
-        private readonly List<(string, Importance, bool)> items = new List<(string, Importance, bool)>();
+        private readonly List<(string itemTitle, Importance importance, bool completed, int rank)> items = new List<(string, Importance, bool, int)>();
 
         public TestTodoListBuilder(IdentityUser owner, string title)
         {
@@ -20,16 +20,16 @@ namespace Todo.Tests
             this.owner = owner;
         }
 
-        public TestTodoListBuilder WithItem(string itemTitle, Importance importance, bool completed = false)
+        public TestTodoListBuilder WithItem(string itemTitle, Importance importance, bool completed = false, int rank = 0)
         {
-            items.Add((itemTitle, importance, completed));
+            items.Add((itemTitle, importance, completed, rank));
             return this;
         }
 
         public TodoList Build()
         {
             var todoList = new TodoList(owner, title);
-            var todoItems = items.Select(itm => new TodoItem(todoList.TodoListId, owner.Id, itm.Item1, itm.Item2) { ResponsibleParty = owner});
+            var todoItems = items.Select(itm => new TodoItem(todoList.TodoListId, owner.Id, itm.Item1, itm.Item2) { ResponsibleParty = owner, IsDone = itm.Item3, Rank = itm.Item4});
             todoItems.ToList().ForEach(tlItm =>
             {
                 todoList.Items.Add(tlItm);
