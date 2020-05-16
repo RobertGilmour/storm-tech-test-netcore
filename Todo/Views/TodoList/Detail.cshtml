@@ -116,7 +116,7 @@
                     break;
             }
 
-            <li class="list-group-item @contextualClass">
+            <li class="list-group-item @contextualClass todo-item" data-id="@(item.TodoItemId)">
 
                 <div class="row">
 
@@ -144,8 +144,23 @@
 
                         </small>
                     </div>
-                </div>
+                    
+                    <div class="col-xs-12" id="edit@(item.TodoItemId)">
+                        <form onsubmit="event.preventDefault();handleEditTodoItem(@(item.TodoItemId));">
+                            <input type="hidden" id="TodoItemId-@(item.TodoItemId)" value="@(item.TodoItemId)" />
+                            <input type="hidden" id="Title-@(item.TodoItemId)" value="@(item.Title)" />
+                            <input type="hidden" id="IsDone-@(item.TodoItemId)" value="@(item.IsDone.ToString())" />
+                            <input type="hidden" id="ResponsiblePartyId-@(item.TodoItemId)" value="@(item.ResponsibleParty.Id)" />
+                            <input type="hidden" id="Importance-@(item.TodoItemId)" value="@(item.Importance)" />
 
+                            <div class="form-group">
+                                <label for="Rank-@(item.TodoItemId)">Rank</label>
+                                <input id="Rank-@(item.TodoItemId)" onchange="handleEditTodoItem(@(item.TodoItemId));" class="rank-input form-control" type="number" min="1" step="1" value="@(item.Rank)" />
+                                <span id="RankErrors-@(item.TodoItemId)" for="Rank-@(item.TodoItemId)" class="rank-error ext-danger"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </li>
         }
     </ul>

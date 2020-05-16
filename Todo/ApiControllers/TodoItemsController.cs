@@ -26,9 +26,8 @@ namespace Todo.Areas.Api
             this.gravatarService = gravatarService;
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> AddNewListItem([FromBody]TodoItemCreateFields fields)
+        public async Task<IActionResult> AddNewListItem([FromBody] TodoItemCreateFields fields)
         {
             var todoList = await dbContext.TodoLists.FirstOrDefaultAsync(list => list.TodoListId == fields.TodoListId);
             if (todoList == null)
@@ -54,6 +53,34 @@ namespace Todo.Areas.Api
             viewModel.ResponsibleParty.FullName = await gravatarService.GetUserFullName(viewModel.ResponsibleParty.Email);
 
             return Ok(viewModel);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditListItem([FromBody] TodoItemEditFields fields)
+        {
+            var responsibleParty = await dbContext.Users.FirstOrDefaultAsync(user => user.Id == fields.ResponsiblePartyId);
+            if (responsibleParty == null)
+            {
+                ModelState.AddModelError(nameof(fields.ResponsiblePartyId), "Responsible party does not exist");
+            }
+
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            var existingTodoItem = await dbContext.TodoItems
+                .Include(item => item.TodoList)
+                .FirstOrDefaultAsync(item => item.TodoItemId == fields.TodoItemId);
+
+            if (existingTodoItem == null)
+            {
+                return NotFound();
+            }
+
+            TodoItemEditFieldsFactory.Update(fields, existingTodoItem);
+
+            dbContext.Update(existingTodoItem);
+            await dbContext.SaveChangesAsync();
+
+            return Ok(TodoItemEditFieldsFactory.Create(existingTodoItem));
         }
     }
 }

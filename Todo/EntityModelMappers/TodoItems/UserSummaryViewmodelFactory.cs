@@ -7,7 +7,7 @@ namespace Todo.EntityModelMappers.TodoItems
     {
         public static UserSummaryViewmodel Create(IdentityUser identityUser)
         {
-            return new UserSummaryViewmodel(identityUser.UserName, identityUser.Email);
+            return new UserSummaryViewmodel(identityUser.Id, identityUser.UserName, identityUser.Email);
         }
     }
 }
