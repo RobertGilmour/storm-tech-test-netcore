@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Todo.Services
@@ -13,14 +14,14 @@ namespace Todo.Services
             _httpClient = httpClient;
         }
 
-        public string GetUserFullName(string emailAddress)
+        public async Task<string> GetUserFullName(string emailAddress)
         {
             var route = $"{Gravatar.GetHash(emailAddress)}.json";
-            var response = _httpClient.GetAsync(route).Result;
+            var response = await _httpClient.GetAsync(route);
 
             if (response.IsSuccessStatusCode)
             {
-                var content = response.Content.ReadAsStringAsync().Result;
+                var content = await response.Content.ReadAsStringAsync();
                 var profile = JsonConvert.DeserializeObject<GravatarProfile>(content);
                 return profile?.Entry?.FirstOrDefault()?.Name.Formatted;
             }

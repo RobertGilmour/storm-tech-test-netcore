@@ -6,10 +6,13 @@ namespace Todo.Models.TodoItems
     public class TodoItemCreateFields
     {
         public int TodoListId { get; set; }
+
+        [Required]
         public string Title { get; set; }
         public string TodoListTitle { get; set; }
 
         [Display(Name = "Responsible Party")]
+        [Required]
         public string ResponsiblePartyId { get; set; }
         public Importance Importance { get; set; } = Importance.Medium;
 

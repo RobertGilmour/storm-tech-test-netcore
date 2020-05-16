@@ -34,7 +34,7 @@ namespace Todo.Controllers
             return View(viewmodel);
         }
 
-        public IActionResult Detail(int todoListId, bool hideCompletedItems, TodoListSortFields orderByField)
+        public async Task<IActionResult> Detail(int todoListId, bool hideCompletedItems, TodoListSortFields orderByField)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
             var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, hideCompletedItems, orderByField);
@@ -46,7 +46,7 @@ namespace Todo.Controllers
 
             foreach (var todoItem in viewmodel.Items)
             {
-                todoItem.ResponsibleParty.FullName = userNames[todoItem.ResponsibleParty.Email];
+                todoItem.ResponsibleParty.FullName = await userNames[todoItem.ResponsibleParty.Email];
             }
 
             return View(viewmodel);

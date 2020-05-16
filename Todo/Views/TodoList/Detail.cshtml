@@ -1,4 +1,5 @@
 ﻿@using Todo.Controllers
+@using Todo.Data
 @using Todo.Data.Entities
 @using Todo.Models.TodoLists
 @using Todo.Services
@@ -9,24 +10,66 @@
     ViewData["Title"] = $"List: {Model.Title}";
 }
 
+@inject ApplicationDbContext dbContext
+
 <h2>@ViewData["Title"]</h2>
 
 <div class="col-md-6">
 
-    <ul class="list-group">
+    <ul id="TodoList" class="list-group">
 
         <li class="list-group-item">
             <div class="row">
                 <div class="col-xs-8">
-                    <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
+                    <a data-toggle="collapse" href="#addNewItem" role="button">
                         <strong>Add New Item</strong>
                     </a>
                 </div>
-                
+
                 <div class="col-xs-4 text-right">
                     <a data-toggle="collapse" href="#collapseOptions" role="button">
                         <small>Options</small>
                     </a>
+                </div>
+
+                <div class="collapse" id="addNewItem">
+                    <hr style="margin-top: 32px;" />
+                    <form class="col-xs-12" onSubmit="event.preventDefault();handleAddNewItem(event);">
+                        <div class="form-group">
+                            <label for="Title">Title</label>
+                            <input id="Title" class="form-control" />
+                            <span id="TitleErrors" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="Importance">Importance</label>
+                            <select id="Importance" class="form-control">
+                                @foreach (var item in SelectListConvenience.ImportanceSelectListItems)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+
+                            <span id="ImportanceErrors" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ResponsiblePartyId">Responsible Party</label>
+                            <select id="ResponsiblePartyId" class="form-control">
+                                @foreach (var item in dbContext.UserSelectListItems())
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+
+                            <span id="ResponsiblePartyIdErrors" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group text-right">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="collapse" id="collapseOptions">
@@ -74,36 +117,38 @@
             }
 
             <li class="list-group-item @contextualClass">
-                
+
                 <div class="row">
 
-                <div class="col-md-8">
-                    <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
+                    <div class="col-md-8">
+                        <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
 
-                        @if (item.IsDone)
-                        {
-                            <s>@item.Title</s>
-                        }
-                        else
-                        {
-                            <text>@item.Title</text>
-                        }
-                    </a>
-                </div>
+                            @if (item.IsDone)
+                            {
+                                <s>@item.Title</s>
+                            }
+                            else
+                            {
+                                <text>@item.Title</text>
+                            }
+                        </a>
+                    </div>
 
-                <div class="col-md-4 text-right">
-                    <small>
-                        @(item.ResponsibleParty.FullName == null 
-                            ? @item.ResponsibleParty.UserName 
-                            : $"{item.ResponsibleParty.FullName} ({@item.ResponsibleParty.UserName})")
+                    <div class="col-md-4 text-right">
+                        <small>
+                            @(item.ResponsibleParty.FullName == null
+                                ? @item.ResponsibleParty.UserName
+                                : $"{item.ResponsibleParty.FullName} ({@item.ResponsibleParty.UserName})")
 
-                        <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30" />
+                            <img src="https://www.gravatar.com/avatar/@(item.ResponsibleParty.GravatarHash)?s=30" />
 
-                    </small>
-                </div>
+                        </small>
+                    </div>
                 </div>
 
             </li>
         }
     </ul>
 </div>
+
+<script src="/js/todoListDetail.js"></script>
